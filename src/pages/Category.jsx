@@ -1,0 +1,585 @@
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  getCategories,
+  getCategoryProducts,
+  deleteCategory,
+} from "../api/category.api";
+
+import { getProducts } from "../api/product.api";
+
+import CategoryFilter from "../includes/category/CategoryFilter";
+import ProductGrid from "../includes/category/ProductGrid";
+
+import useEscapeKey from "../features/useEscapeKey";
+
+const DEFAULT_PAGINATION = {
+  page: 1,
+  limit: 8,
+  total: 0,
+  totalPages: 0,
+  hasNextPage: false,
+  hasPreviousPage: false,
+};
+
+const Category = () => {
+  const [categories, setCategories] = useState([]);
+  const [categoryLoading, setCategoryLoading] =
+    useState(true);
+
+  const [selectedCategory, setSelectedCategory] =
+    useState(null);
+
+  const [selectedGender, setSelectedGender] =
+    useState("");
+
+  const [products, setProducts] = useState([]);
+  const [productLoading, setProductLoading] =
+    useState(true);
+
+  const [loadingMore, setLoadingMore] =
+    useState(false);
+
+  const [pagination, setPagination] =
+    useState(DEFAULT_PAGINATION);
+
+  const loadingMoreRef = useRef(false);
+
+  const [error, setError] = useState("");
+
+  // =========================================================
+  // FETCH CATEGORIES
+  // =========================================================
+
+  const fetchCategories = async () => {
+    try {
+      setCategoryLoading(true);
+      setError("");
+
+      const response = await getCategories();
+
+      console.log(
+        "GET CATEGORIES:",
+        response,
+      );
+
+      const data = Array.isArray(
+        response.data,
+      )
+        ? response.data
+        : [];
+
+      setCategories(data);
+    } catch (error) {
+      console.error(
+        "GET CATEGORIES ERROR:",
+        error,
+      );
+
+      setCategories([]);
+
+      setError(
+        error.response?.data?.message ||
+          "Gagal mengambil data category",
+      );
+    } finally {
+      setCategoryLoading(false);
+    }
+  };
+
+  // =========================================================
+  // FETCH PRODUCTS
+  // =========================================================
+
+  const fetchProducts = async (
+    page = 1,
+    categoryId = null,
+    gender = "",
+    append = false,
+  ) => {
+    try {
+      if (append) {
+        setLoadingMore(true);
+      } else {
+        setProductLoading(true);
+      }
+
+      setError("");
+
+      let response;
+
+      // =====================================================
+      // CATEGORY FILTER
+      // =====================================================
+
+      if (categoryId) {
+        response =
+          await getCategoryProducts(
+            categoryId,
+            page,
+            8,
+            gender,
+          );
+
+        console.log(
+          "GET CATEGORY PRODUCTS:",
+          response,
+        );
+
+        const newProducts =
+          response.data?.products ?? [];
+
+        const newPagination =
+          response.data?.pagination ??
+          DEFAULT_PAGINATION;
+
+        if (append) {
+          setProducts((prev) => [
+            ...prev,
+            ...newProducts,
+          ]);
+        } else {
+          setProducts(newProducts);
+        }
+
+        setPagination(newPagination);
+
+        return;
+      }
+
+      // =====================================================
+      // ALL PRODUCTS + GENDER FILTER
+      // =====================================================
+
+      response = await getProducts(
+        page,
+        8,
+        "",
+        gender,
+      );
+
+      console.log(
+        "GET PRODUCTS:",
+        response,
+      );
+
+      const newProducts =
+        response.data ?? [];
+
+      const newPagination =
+        response.pagination ??
+        DEFAULT_PAGINATION;
+
+      if (append) {
+        setProducts((prev) => [
+          ...prev,
+          ...newProducts,
+        ]);
+      } else {
+        setProducts(newProducts);
+      }
+
+      setPagination(newPagination);
+    } catch (error) {
+      console.error(
+        "GET PRODUCTS ERROR:",
+        error,
+      );
+
+      if (!append) {
+        setProducts([]);
+        setPagination(
+          DEFAULT_PAGINATION,
+        );
+      }
+
+      setError(
+        error.response?.data?.message ||
+          "Gagal mengambil product",
+      );
+    } finally {
+      setProductLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  // =========================================================
+  // INITIAL DATA
+  // =========================================================
+
+  useEffect(() => {
+    const loadInitialData = async () => {
+      await Promise.all([
+        fetchCategories(),
+        fetchProducts(
+          1,
+          null,
+          "",
+          false,
+        ),
+      ]);
+    };
+
+    loadInitialData();
+  }, []);
+
+  // =========================================================
+  // CATEGORY CHANGE
+  // =========================================================
+
+  const handleCategoryChange = async (
+    category,
+  ) => {
+    setSelectedCategory(category);
+    setSelectedGender("");
+
+    setProducts([]);
+    setPagination(
+      DEFAULT_PAGINATION,
+    );
+
+    await fetchProducts(
+      1,
+      category?.id ?? null,
+      "",
+      false,
+    );
+  };
+
+  // =========================================================
+  // GENDER CHANGE
+  // =========================================================
+
+  const handleGenderChange = async (
+    gender,
+  ) => {
+    setSelectedGender(gender);
+    setSelectedCategory(null);
+
+    setProducts([]);
+    setPagination(
+      DEFAULT_PAGINATION,
+    );
+
+    await fetchProducts(
+      1,
+      null,
+      gender,
+      false,
+    );
+  };
+
+  // =========================================================
+  // LOAD MORE
+  // =========================================================
+
+  const loadMoreProducts = async () => {
+    if (
+      loadingMoreRef.current ||
+      productLoading ||
+      !pagination.hasNextPage
+    ) {
+      return;
+    }
+
+    loadingMoreRef.current = true;
+
+    try {
+      const nextPage =
+        pagination.page + 1;
+
+      await fetchProducts(
+        nextPage,
+        selectedCategory?.id ?? null,
+        selectedGender,
+        true,
+      );
+    } finally {
+      loadingMoreRef.current = false;
+    }
+  };
+
+  // =========================================================
+  // INFINITE SCROLL
+  // =========================================================
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop =
+        window.scrollY;
+
+      const windowHeight =
+        window.innerHeight;
+
+      const documentHeight =
+        document.documentElement
+          .scrollHeight;
+
+      const distanceFromBottom =
+        documentHeight -
+        (scrollTop + windowHeight);
+
+      if (
+        distanceFromBottom < 400 &&
+        pagination.hasNextPage &&
+        !loadingMore &&
+        !productLoading
+      ) {
+        loadMoreProducts();
+      }
+    };
+
+    window.addEventListener(
+      "scroll",
+      handleScroll,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        handleScroll,
+      );
+    };
+  }, [
+    pagination,
+    loadingMore,
+    productLoading,
+    selectedCategory,
+    selectedGender,
+  ]);
+
+  // =========================================================
+  // ESCAPE / RESET FILTER
+  // =========================================================
+
+  const handleEscape = useCallback(() => {
+    const hasActiveFilter =
+      selectedCategory ||
+      selectedGender;
+
+    if (!hasActiveFilter) {
+      return;
+    }
+
+    setSelectedCategory(null);
+    setSelectedGender("");
+
+    setProducts([]);
+    setPagination(
+      DEFAULT_PAGINATION,
+    );
+
+    fetchProducts(
+      1,
+      null,
+      "",
+      false,
+    );
+  }, [
+    selectedCategory,
+    selectedGender,
+  ]);
+
+  useEscapeKey(
+    handleEscape,
+    !productLoading &&
+      !loadingMore,
+  );
+
+  // =========================================================
+  // DELETE CATEGORY
+  // =========================================================
+
+  const handleDeleteCategory = async (
+    category,
+  ) => {
+    try {
+      setError("");
+
+      await deleteCategory(
+        category.id,
+      );
+
+      setCategories((prev) =>
+        prev.filter(
+          (item) =>
+            item.id !== category.id,
+        ),
+      );
+
+      setSelectedCategory(null);
+
+      setProducts([]);
+
+      setPagination(
+        DEFAULT_PAGINATION,
+      );
+
+      await fetchProducts(
+        1,
+        null,
+        selectedGender,
+        false,
+      );
+    } catch (error) {
+      console.error(
+        "DELETE CATEGORY ERROR:",
+        error,
+      );
+
+      setError(
+        error.response?.data?.message ||
+          "Gagal menghapus category",
+      );
+    }
+  };
+
+  // =========================================================
+  // PRODUCT DELETED
+  // =========================================================
+
+  const handleProductDeleted = (
+    productId,
+  ) => {
+    setProducts((prev) =>
+      prev.filter(
+        (product) =>
+          product.id !== productId,
+      ),
+    );
+  };
+
+  // =========================================================
+  // CURRENT TITLE
+  // =========================================================
+
+  const currentTitle = selectedCategory
+    ? selectedCategory.name
+    : selectedGender === "MEN"
+      ? "Men"
+      : selectedGender === "WOMEN"
+        ? "Women"
+        : "Semua Product";
+
+  // =========================================================
+  // RENDER
+  // =========================================================
+
+  return (
+    <div className="min-h-screen bg-base-200 px-5 py-4 md:px-8 md:py-10 lg:px-10">
+      <div className="mx-auto max-w-7xl">
+        {/* ERROR */}
+        {error && (
+          <div className="alert alert-error mb-6 border border-error/20">
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* CATEGORY FILTER */}
+        <section className="mb-8">
+          <div className="mb-4">
+            <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-primary">
+              Filter
+            </p>
+
+            <h2 className="mt-1 text-2xl lg:text-4xl font-[Philosophy] mb-5">
+              Product Selection
+            </h2>
+          </div>
+
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={
+              selectedCategory
+            }
+            selectedGender={
+              selectedGender
+            }
+            loading={categoryLoading}
+            onChange={
+              handleCategoryChange
+            }
+            onGenderChange={
+              handleGenderChange
+            }
+            onDelete={
+              handleDeleteCategory
+            }
+          />
+        </section>
+
+        {/* PRODUCT LIST HEADER */}
+        <section className="mb-5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-base-content/40">
+                Collection
+              </p>
+
+              <h2 className="mt-1 text-2xl font-semibold tracking-tight">
+                {currentTitle}
+              </h2>
+            </div>
+
+            <p className="text-xs text-base-content/45">
+              {pagination.total} product
+            </p>
+          </div>
+        </section>
+
+        {/* PRODUCT GRID */}
+        <ProductGrid
+          products={products}
+          loading={productLoading}
+          selectedCategory={
+            selectedCategory
+          }
+          onDeleted={
+            handleProductDeleted
+          }
+        />
+
+        {/* LOAD MORE */}
+        {!productLoading &&
+          products.length > 0 &&
+          pagination.hasNextPage && (
+            <div className="flex justify-center py-10">
+              {loadingMore ? (
+                <div className="flex items-center gap-3">
+                  <span className="loading loading-spinner loading-sm text-primary" />
+
+                  <span className="text-[10px] uppercase tracking-[0.18em] text-base-content/40">
+                    Memuat product...
+                  </span>
+                </div>
+              ) : (
+                <span className="text-[10px] uppercase tracking-[0.18em] text-base-content/35">
+                  Scroll untuk memuat
+                  product berikutnya
+                </span>
+              )}
+            </div>
+          )}
+
+        {/* END */}
+        {!productLoading &&
+          products.length > 0 &&
+          !pagination.hasNextPage && (
+            <div className="py-10 text-center">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-base-content/35">
+                Semua product telah
+                ditampilkan.
+              </p>
+            </div>
+          )}
+      </div>
+    </div>
+  );
+};
+
+export default Category;
