@@ -168,36 +168,6 @@ const WhatsappSetting = () => {
                   )}
                 </button>
               </div>
-
-              {/* DETECTED CHANNEL */}
-              <div className="border-t border-base-300/60 pt-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-base-content/40">
-                      Detected Channel
-                    </p>
-
-                    <p className="mt-1 text-xs text-base-content/50">
-                      Channel ini digunakan frontend untuk menentukan
-                      cara membuka Order URL.
-                    </p>
-                  </div>
-
-                  {orderChannel === "whatsapp" ? (
-                    <span className="badge badge-success badge-outline">
-                      WhatsApp
-                    </span>
-                  ) : orderChannel === "external" ? (
-                    <span className="badge badge-neutral badge-outline">
-                      External
-                    </span>
-                  ) : (
-                    <span className="badge badge-warning badge-outline">
-                      Unknown
-                    </span>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         )}
