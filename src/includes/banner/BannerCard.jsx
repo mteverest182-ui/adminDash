@@ -51,12 +51,6 @@ const BannerCard = ({
     const isActive =
         banner?.status === "ACTIVE";
 
-    /*
-     * =========================
-     * SLOT KOSONG
-     * =========================
-     */
-
     if (!banner) {
         return (
             <div
@@ -131,13 +125,6 @@ const BannerCard = ({
             </div>
         );
     }
-
-    /*
-     * =========================
-     * BANNER ADA
-     * =========================
-     */
-
     return (
         <div
             className={`
@@ -153,9 +140,6 @@ const BannerCard = ({
                 }
             `}
         >
-            {/* =========================
-                HEADER
-                ========================= */}
 
             <div className="flex items-start justify-between gap-3 border-b border-base-300 p-4">
                 <div className="flex items-center gap-3">
@@ -185,8 +169,6 @@ const BannerCard = ({
                     </div>
                 </div>
 
-                {/* STATUS */}
-
                 <span
                     className={`
                         badge
@@ -211,10 +193,6 @@ const BannerCard = ({
                     )}
                 </span>
             </div>
-
-            {/* =========================
-                IMAGE PREVIEW
-                ========================= */}
 
             <div className="relative flex min-h-[220px] items-center justify-center overflow-hidden bg-base-200 p-2">
                 {previewImage ? (
@@ -257,10 +235,6 @@ const BannerCard = ({
                 )}
             </div>
 
-            {/* =========================
-                INFORMATION
-                ========================= */}
-
             <div className="space-y-3 p-4">
                 <div>
                     <h3 className="font-semibold">
@@ -275,8 +249,6 @@ const BannerCard = ({
                         </p>
                     )}
                 </div>
-
-                {/* IMAGE DIMENSIONS */}
 
                 <div className="flex flex-wrap gap-2 text-xs text-base-content/50">
                     {desktopImage && (
@@ -305,10 +277,6 @@ const BannerCard = ({
                         </span>
                     )}
                 </div>
-
-                {/* =========================
-                    ACTIONS
-                    ========================= */}
 
                 <div className="flex flex-wrap gap-2 border-t border-base-300 pt-3">
 

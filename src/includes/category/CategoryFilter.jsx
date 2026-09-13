@@ -14,8 +14,6 @@ const CategoryFilter = ({
   return (
     <div className="card mb-6 bg-base-100 shadow-sm">
       <div className="card-body">
-
-        {/* HEADER */}
         <div className="flex items-center">
           <div>
             <h2 className="font-semibold">
@@ -41,16 +39,12 @@ const CategoryFilter = ({
             </button>
           )}
         </div>
-
-        {/* FILTER */}
         <div className="mt-4">
           <p className="mb-2 text-sm font-semibold">
             Filter 
           </p>
 
           <div className="flex gap-2 overflow-x-auto pb-2">
-
-            {/* SEMUA */}
             <button
               type="button"
               className={`btn shrink-0 ${
@@ -64,8 +58,6 @@ const CategoryFilter = ({
             >
               Semua
             </button>
-
-            {/* CATEGORY */}
             {categoryLoading ? (
               <span className="loading loading-spinner loading-sm" />
             ) : (
@@ -88,8 +80,6 @@ const CategoryFilter = ({
                 </button>
               ))
             )}
-
-            {/* MEN */}
             <button
               type="button"
               className={`btn shrink-0 ${
@@ -104,8 +94,6 @@ const CategoryFilter = ({
             >
               Men
             </button>
-
-            {/* WOMEN */}
             <button
               type="button"
               className={`btn shrink-0 ${

@@ -119,7 +119,6 @@ const AdminForm = ({
           disabled={loading}
         />
       </div>
-      {/* Email  */}
       <div className="form-control">
         <label className="label">
           <span className="label-text font-medium">Email</span>
@@ -141,7 +140,6 @@ const AdminForm = ({
         />
       </div>
 
-      {/* Password */}
       <div className="form-control">
         <label className="label">
           <span className="span label-text font-medium">Password</span>
@@ -176,7 +174,6 @@ const AdminForm = ({
         )}
       </div>
 
-      {/* Actions */}
       <div className="flex justify-end gap-3 pt-3">
         <button
           type="button"

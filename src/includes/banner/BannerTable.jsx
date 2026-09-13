@@ -23,14 +23,6 @@ const BannerTable = ({
     onDelete,
     onStatusChange,
 }) => {
-    /*
-     * ==================================================
-     * FILTER SLOT TERTENTU
-     * ==================================================
-     *
-     * Kalau user memilih filter selain ALL,
-     * hanya tampilkan 1 card sesuai slot.
-     */
     if (activeFilter !== "ALL") {
         const slot =
             BANNER_SLOT_OPTIONS.find(
@@ -45,16 +37,10 @@ const BannerTable = ({
                 activeFilter,
             );
 
-        /*
-         * Slot tidak ditemukan
-         */
         if (!slot) {
             return null;
         }
 
-        /*
-         * Slot belum memiliki banner
-         */
         if (!banner) {
             return (
                 <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-base-300 bg-base-200/40 px-6 text-center">
@@ -88,10 +74,6 @@ const BannerTable = ({
                 </div>
             );
         }
-
-        /*
-         * Hanya 1 card untuk filter aktif
-         */
         return (
             <div className="mx-auto max-w-3xl">
                 <BannerCard
@@ -106,30 +88,9 @@ const BannerTable = ({
         );
     }
 
-    /*
-     * ==================================================
-     * ALL
-     * ==================================================
-     *
-     * JANGAN UBAH STRUKTUR INI.
-     *
-     * Struktur ini menggambarkan layout homepage
-     * ecommerce:
-     *
-     *          1 HERO
-     *
-     *       2        3
-     *
-     *       4        5
-     *
-     *    6    7    8    9
-     */
-
     return (
         <div className="space-y-6">
-            {/* =========================================
-                1 - HERO
-            ========================================= */}
+
             <div>
                 {renderSlot(
                     BANNER_SLOT_OPTIONS[0],
@@ -140,10 +101,6 @@ const BannerTable = ({
                     onStatusChange,
                 )}
             </div>
-
-            {/* =========================================
-                2 - 3
-            ========================================= */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {renderSlot(
                     BANNER_SLOT_OPTIONS[1],
@@ -164,9 +121,6 @@ const BannerTable = ({
                 )}
             </div>
 
-            {/* =========================================
-                4 - 5
-            ========================================= */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {renderSlot(
                     BANNER_SLOT_OPTIONS[3],
@@ -186,10 +140,6 @@ const BannerTable = ({
                     onStatusChange,
                 )}
             </div>
-
-            {/* =========================================
-                6 - 9
-            ========================================= */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
                 {renderSlot(
                     BANNER_SLOT_OPTIONS[5],
@@ -231,11 +181,6 @@ const BannerTable = ({
     );
 };
 
-/*
- * ==================================================
- * RENDER SLOT UNTUK MODE ALL
- * ==================================================
- */
 const renderSlot = (
     slot,
     banners,

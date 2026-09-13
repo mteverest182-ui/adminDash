@@ -5,9 +5,6 @@ const Pagination = ({
 }) => {
   return (
     <div className="mt-8 flex items-center justify-center gap-2">
-
-      {/* PREVIOUS */}
-
       <button
         type="button"
         className="btn btn-sm"
@@ -18,9 +15,6 @@ const Pagination = ({
       >
         ←
       </button>
-
-      {/* PAGE NUMBER */}
-
       {Array.from(
         {
           length: pagination.totalPages,
@@ -42,9 +36,6 @@ const Pagination = ({
           {pageNumber}
         </button>
       ))}
-
-      {/* NEXT */}
-
       <button
         type="button"
         className="btn btn-sm"

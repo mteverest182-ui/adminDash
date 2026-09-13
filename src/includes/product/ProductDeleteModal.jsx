@@ -13,7 +13,6 @@ const ProductDeleteModal = ({ product, loading, onClose, onConfirm }) => {
           </span>
           ?
         </p>
-
         <div className="modal-action">
           <button
             type="button"

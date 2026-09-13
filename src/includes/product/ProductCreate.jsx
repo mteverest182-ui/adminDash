@@ -47,15 +47,12 @@ const ProductCreate = () => {
             Tambahkan Product baru ke dalam katalog.
           </p>
         </div>
-
-        {/* Server Error */}
         {error && (
           <div className="alert alert-error mb-6">
             <span>{error}</span>
           </div>
         )}
 
-        {/* Form */}
         <div className="card bg-base-100 shadow">
           <div className="card-body">
             <ProductForm onSubmit={handleSubmit} loading={loading} />

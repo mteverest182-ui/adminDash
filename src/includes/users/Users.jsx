@@ -36,9 +36,6 @@ const Users = () => {
     const [deleteLoading, setDeleteLoading] =
         useState(false);
 
-    /*
-     * GET ADMIN ACCOUNTS
-     */
     const fetchUsers = useCallback(
         async () => {
             try {
@@ -74,29 +71,17 @@ const Users = () => {
         fetchUsers();
     }, [fetchUsers]);
 
-    /*
-     * STATISTICS
-     *
-     * Karena sekarang hanya ada satu role:
-     * ADMIN
-     */
     const totalAdmin = users.filter(
         (user) =>
             user.role === "ADMIN",
     ).length;
 
-    /*
-     * CREATE ADMIN
-     */
     const handleOpenCreate = () => {
         setEditingAdmin(null);
         setIsFormOpen(true);
         setError("");
     };
 
-    /*
-     * EDIT ADMIN
-     */
     const handleOpenEdit = (user) => {
         if (user.role !== "ADMIN") {
             return;
@@ -107,9 +92,6 @@ const Users = () => {
         setError("");
     };
 
-    /*
-     * CLOSE FORM
-     */
     const handleCloseForm = useCallback(
         () => {
             if (submitLoading) {
@@ -127,9 +109,6 @@ const Users = () => {
         isFormOpen,
     );
 
-    /*
-     * CREATE / UPDATE ADMIN
-     */
     const handleSubmit = async (
         formData,
     ) => {
@@ -185,9 +164,6 @@ const Users = () => {
         }
     };
 
-    /*
-     * OPEN DELETE
-     */
     const handleOpenDelete = (
         user,
     ) => {
@@ -198,9 +174,6 @@ const Users = () => {
         setDeletingAdmin(user);
     };
 
-    /*
-     * CLOSE DELETE
-     */
     const handleCloseDelete = () => {
         if (deleteLoading) {
             return;
@@ -209,9 +182,7 @@ const Users = () => {
         setDeletingAdmin(null);
     };
 
-    /*
-     * DELETE ADMIN
-     */
+
     const handleConfirmDelete =
         async () => {
             if (!deletingAdmin) {
@@ -256,9 +227,7 @@ const Users = () => {
         <div className="min-h-screen bg-base-200 px-5 py-8 md:px-8 md:py-10 lg:px-10">
             <div className="mx-auto max-w-7xl">
 
-                {/* =========================================
-                    HEADER
-                ========================================= */}
+
                 <header className="mb-10 md:mb-14">
                     <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
 
@@ -295,9 +264,7 @@ const Users = () => {
                     </div>
                 </header>
 
-                {/* =========================================
-                    ERROR
-                ========================================= */}
+
                 {error && !isFormOpen && (
                     <div className="mb-8 border border-error/20 bg-error/5 px-5 py-4">
                         <div className="flex items-center gap-3">
@@ -310,9 +277,6 @@ const Users = () => {
                     </div>
                 )}
 
-                {/* =========================================
-                    STATISTICS
-                ========================================= */}
                 <section>
                     <div className="mb-5 flex items-center justify-between">
                         <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-base-content/40">
@@ -326,7 +290,7 @@ const Users = () => {
 
                     <div className="grid grid-cols-1 gap-px overflow-hidden border border-base-300/60 bg-base-300/60">
 
-                        {/* ADMIN */}
+                        
                         <div className="group bg-base-100 p-6 transition-colors duration-300 hover:bg-base-200/50 md:p-8 lg:p-9">
 
                             <div className="flex items-start justify-between">
@@ -360,10 +324,6 @@ const Users = () => {
 
                     </div>
                 </section>
-
-                {/* =========================================
-                    ADMIN MANAGEMENT
-                ========================================= */}
                 <section className="mt-10 md:mt-12">
 
                     <div className="mb-5">
@@ -374,7 +334,7 @@ const Users = () => {
 
                     <div className="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm">
 
-                        {/* TABLE HEADER */}
+                        
                         <div className="border-b border-base-300 p-5 sm:p-6">
                             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 
@@ -396,7 +356,7 @@ const Users = () => {
                             </div>
                         </div>
 
-                        {/* CONTENT */}
+                        
                         {loading ? (
                             <div className="flex min-h-[320px] items-center justify-center">
                                 <span className="loading loading-spinner loading-md text-primary" />
@@ -472,7 +432,7 @@ const Users = () => {
                                                         }
                                                     >
 
-                                                        {/* USER */}
+                                                        
                                                         <td>
                                                             <div className="flex items-center gap-3">
 
@@ -500,7 +460,7 @@ const Users = () => {
                                                             </div>
                                                         </td>
 
-                                                        {/* EMAIL */}
+                                                        
                                                         <td>
                                                             <span className="text-sm">
                                                                 {
@@ -509,7 +469,7 @@ const Users = () => {
                                                             </span>
                                                         </td>
 
-                                                        {/* ROLE */}
+                                                        
                                                         <td>
                                                             {isAdmin ? (
                                                                 <span className="badge badge-outline">
@@ -522,7 +482,7 @@ const Users = () => {
                                                             )}
                                                         </td>
 
-                                                        {/* ACTION */}
+                                                        
                                                         <td>
                                                             <div className="flex justify-end gap-2">
 
@@ -572,10 +532,6 @@ const Users = () => {
                 </section>
 
             </div>
-
-            {/* =========================================
-                CREATE / EDIT MODAL
-            ========================================= */}
             {isFormOpen && (
                 <div className="modal modal-open">
 
@@ -619,10 +575,6 @@ const Users = () => {
 
                 </div>
             )}
-
-            {/* =========================================
-                DELETE MODAL
-            ========================================= */}
             {deletingAdmin && (
                 <div className="modal modal-open">
 

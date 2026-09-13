@@ -31,8 +31,7 @@ const useWhatsappSetting = () => {
       setOrderChannel(channel);
     } catch (error) {
       setWhatsappMessage(
-        error.response?.data?.message ||
-          "Gagal mengambil Order URL",
+        error.response?.data?.message
       );
 
       setWhatsappMessageType("error");
@@ -83,13 +82,11 @@ const useWhatsappSetting = () => {
       setWhatsappMessageType("success");
     } catch (error) {
       console.error(
-        "UPDATE WHATSAPP ERROR:",
         error,
       );
 
       setWhatsappMessage(
-        error.response?.data?.message ||
-          "Gagal menyimpan Order URL",
+        error.response?.data?.message
       );
 
       setWhatsappMessageType("error");
@@ -117,7 +114,6 @@ const useWhatsappSetting = () => {
       setWhatsappMessageType("success");
     } catch (error) {
       console.error(
-        "DELETE WHATSAPP ERROR:",
         error,
       );
 

@@ -48,10 +48,6 @@ const ProductForm = ({
   const [categoryCreating, setCategoryCreating] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
 
-  // =========================================================
-  // CANCEL / ESCAPE
-  // =========================================================
-
   const handleCancel = useCallback(() => {
     if (loading) return;
 
@@ -60,9 +56,6 @@ const ProductForm = ({
 
   useEscapeKey(handleCancel, !loading);
 
-  // =========================================================
-  // INPUT CLASS
-  // =========================================================
 
   const getInputClass = (field) => {
     const baseClass = "input input-bordered w-full";
@@ -89,11 +82,6 @@ const ProductForm = ({
 
     return "file-input file-input-bordered file-input-success w-full";
   };
-
-  // =========================================================
-  // INITIAL DATA
-  // =========================================================
-
   useEffect(() => {
     if (!initialData) return;
 
@@ -113,10 +101,6 @@ const ProductForm = ({
       setPreview(initialData.image);
     }
   }, [initialData]);
-
-  // =========================================================
-  // FETCH CATEGORY
-  // =========================================================
 
   const fetchCategories = async () => {
     try {
@@ -150,10 +134,6 @@ const ProductForm = ({
     fetchCategories();
   }, []);
 
-  // =========================================================
-  // PRICE
-  // =========================================================
-
   const handlePriceChange = (value) => {
     setForm((prev) => ({
       ...prev,
@@ -177,10 +157,6 @@ const ProductForm = ({
     }));
   };
 
-  // =========================================================
-  // GENERAL INPUT
-  // =========================================================
-
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -202,10 +178,6 @@ const ProductForm = ({
       }));
     }
   };
-
-  // =========================================================
-  // DISCOUNT PRESET
-  // =========================================================
 
   const handleDiscountSelect = (discount) => {
     const value = String(discount);
@@ -232,10 +204,6 @@ const ProductForm = ({
     }));
   };
 
-  // =========================================================
-  // BLUR
-  // =========================================================
-
   const handleBlur = (event) => {
     const { name, value } = event.target;
 
@@ -255,10 +223,6 @@ const ProductForm = ({
       [name]: validationError,
     }));
   };
-
-  // =========================================================
-  // IMAGE
-  // =========================================================
 
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
@@ -326,10 +290,6 @@ const ProductForm = ({
     }));
   };
 
-  // =========================================================
-  // VALIDATE FORM
-  // =========================================================
-
   const validateForm = () => {
     const newErrors =
       validateProductForm(
@@ -359,10 +319,6 @@ const ProductForm = ({
     );
   };
 
-  // =========================================================
-  // SUBMIT
-  // =========================================================
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -377,11 +333,6 @@ const ProductForm = ({
       image,
     });
   };
-
-  // =========================================================
-  // CREATE CATEGORY
-  // =========================================================
-
   const handleCreateCategory = async () => {
     const trimmedName =
       newCategoryName.trim();
@@ -441,10 +392,6 @@ const ProductForm = ({
     }
   };
 
-  // =========================================================
-  // PRICE CALCULATION
-  // =========================================================
-
   const numericPrice =
     Number(form.price) || 0;
 
@@ -471,10 +418,6 @@ const ProductForm = ({
       },
     ).format(value);
   };
-
-  // =========================================================
-  // RENDER
-  // =========================================================
 
   return (
     <form
@@ -920,8 +863,6 @@ const ProductForm = ({
           </label>
         )}
       </div>
-
-      {/* PREVIEW IMAGE */}
       {preview && (
         <div>
           <p className="mb-2 text-sm font-medium">

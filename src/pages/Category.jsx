@@ -52,15 +52,10 @@ const Category = () => {
 
   const [error, setError] = useState("");
 
-  // Mencegah load more berjalan dua kali
   const loadingMoreRef = useRef(false);
 
-  // Menandai request product terbaru
   const productRequestRef = useRef(0);
 
-  // =========================================================
-  // FETCH CATEGORIES
-  // =========================================================
 
   const fetchCategories = useCallback(
     async () => {
@@ -97,9 +92,6 @@ const Category = () => {
     [],
   );
 
-  // =========================================================
-  // FETCH PRODUCTS
-  // =========================================================
 
   const fetchProducts = useCallback(
     async (
@@ -122,9 +114,6 @@ const Category = () => {
 
         let response;
 
-        // =====================================================
-        // CATEGORY
-        // =====================================================
 
         if (categoryId) {
           response =
@@ -143,7 +132,6 @@ const Category = () => {
             response.data?.pagination ??
             DEFAULT_PAGINATION;
 
-          // Request ini sudah tidak aktif
           if (
             requestId !==
             productRequestRef.current
@@ -167,9 +155,6 @@ const Category = () => {
           return;
         }
 
-        // =====================================================
-        // ALL PRODUCTS / MEN / WOMEN
-        // =====================================================
 
         response = await getProducts(
           page,
@@ -185,7 +170,6 @@ const Category = () => {
           response.pagination ??
           DEFAULT_PAGINATION;
 
-        // Request ini sudah tidak aktif
         if (
           requestId !==
           productRequestRef.current
@@ -211,8 +195,6 @@ const Category = () => {
           error,
         );
 
-        // Jangan biarkan request lama
-        // menghapus data request terbaru
         if (
           requestId !==
           productRequestRef.current
@@ -244,9 +226,6 @@ const Category = () => {
     [],
   );
 
-  // =========================================================
-  // INITIAL DATA
-  // =========================================================
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -267,9 +246,6 @@ const Category = () => {
     fetchProducts,
   ]);
 
-  // =========================================================
-  // CATEGORY CHANGE
-  // =========================================================
 
   const handleCategoryChange = async (category) => {
 
@@ -308,29 +284,20 @@ const Category = () => {
 };
 
 
-  // =========================================================
-  // GENDER CHANGE
-  // =========================================================
 
   const handleGenderChange = async (
     gender,
   ) => {
-    // Gender aktif
     setSelectedGender(gender);
 
-    // Category dimatikan
     setSelectedCategory(null);
 
-    // Reset product
     setProducts([]);
 
-    // Reset pagination
     setPagination(
       DEFAULT_PAGINATION,
     );
 
-    // PENTING:
-    // MEN/WOMEN menggunakan getProducts()
     await fetchProducts(
       1,
       null,
@@ -339,9 +306,6 @@ const Category = () => {
     );
   };
 
-  // =========================================================
-  // LOAD MORE
-  // =========================================================
 
   const loadMoreProducts = useCallback(
     async () => {
@@ -385,9 +349,6 @@ const Category = () => {
     ],
   );
 
-  // =========================================================
-  // INFINITE SCROLL
-  // =========================================================
 
   useEffect(() => {
     const handleScroll = () => {
@@ -433,9 +394,6 @@ const Category = () => {
     loadMoreProducts,
   ]);
 
-  // =========================================================
-  // ESCAPE / RESET FILTER
-  // =========================================================
 
   const handleEscape = useCallback(() => {
     const hasActiveFilter =
@@ -473,9 +431,6 @@ const Category = () => {
       !loadingMore,
   );
 
-  // =========================================================
-  // DELETE CATEGORY
-  // =========================================================
 
   const handleDeleteCategory = async (
     category,
@@ -521,9 +476,6 @@ const Category = () => {
     }
   };
 
-  // =========================================================
-  // PRODUCT DELETED
-  // =========================================================
 
   const handleProductDeleted = (
     productId,
@@ -536,9 +488,6 @@ const Category = () => {
     );
   };
 
-  // =========================================================
-  // CURRENT TITLE
-  // =========================================================
 
   const currentTitle =
     selectedCategory
@@ -549,22 +498,17 @@ const Category = () => {
           ? "Women"
           : "Semua Product";
 
-  // =========================================================
-  // RENDER
-  // =========================================================
 
   return (
     <div className="min-h-screen bg-base-200 px-5 py-4 md:px-8 md:py-10 lg:px-10">
       <div className="mx-auto max-w-7xl">
 
-        {/* ERROR */}
         {error && (
           <div className="alert alert-error mb-6 border border-error/20">
             <span>{error}</span>
           </div>
         )}
 
-        {/* CATEGORY FILTER */}
         <section className="mb-8">
           <div className="mb-4">
             <p className="mb-3 text-[9px] font-medium uppercase tracking-[0.3em] text-primary">
@@ -596,8 +540,6 @@ const Category = () => {
             }
           />
         </section>
-
-        {/* PRODUCT LIST HEADER */}
         <section className="mb-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -615,8 +557,6 @@ const Category = () => {
             </p>
           </div>
         </section>
-
-        {/* PRODUCT GRID */}
         <ProductGrid
           products={products}
           loading={productLoading}
@@ -627,8 +567,6 @@ const Category = () => {
             handleProductDeleted
           }
         />
-
-        {/* LOAD MORE */}
         {!productLoading &&
           products.length > 0 &&
           pagination.hasNextPage && (
@@ -650,7 +588,6 @@ const Category = () => {
             </div>
           )}
 
-        {/* END */}
         {!productLoading &&
           products.length > 0 &&
           !pagination.hasNextPage && (
