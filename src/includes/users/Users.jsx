@@ -48,11 +48,6 @@ const Users = () => {
                 const response =
                     await getUsers();
 
-                console.log(
-                    "GET ADMIN ACCOUNTS:",
-                    response,
-                );
-
                 setUsers(
                     response?.data ?? [],
                 );
@@ -285,7 +280,7 @@ const Users = () => {
 
                         <button
                             type="button"
-                            className="btn btn-primary gap-2 px-6"
+                            className="btn btn-primary gap-2 px-6 lg:mb-12"
                             onClick={
                                 handleOpenCreate
                             }

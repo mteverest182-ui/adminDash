@@ -124,8 +124,7 @@ const ProductForm = ({
       setError("");
 
       const response = await getCategories();
-
-      console.log("CATEGORIES:", response);
+      
 
       setCategories(
         Array.isArray(response.data)
@@ -134,15 +133,13 @@ const ProductForm = ({
       );
     } catch (error) {
       console.error(
-        "FETCH CATEGORIES ERROR:",
         error,
       );
 
       setCategories([]);
 
       setError(
-        error.response?.data?.message ||
-          "Gagal mengambil category",
+        error.response?.data?.message
       );
     } finally {
       setCategoryLoading(false);
@@ -405,11 +402,6 @@ const ProductForm = ({
           name: trimmedName,
         });
 
-      console.log(
-        "CREATE CATEGORY:",
-        response,
-      );
-
       const newCategory =
         response.data;
 
@@ -438,13 +430,11 @@ const ProductForm = ({
       setNewCategoryName("");
     } catch (error) {
       console.error(
-        "CREATE CATEGORY ERROR:",
         error,
       );
 
       setError(
-        error.response?.data?.message ||
-          "Gagal membuat category",
+        error.response?.data?.message
       );
     } finally {
       setCategoryCreating(false);

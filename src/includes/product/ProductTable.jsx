@@ -96,10 +96,6 @@ const ProductTable = ({
                         >
                           {product.name}
                         </p>
-
-                        <p className="mt-0.5 text-[10px] uppercase tracking-[0.15em] text-base-content/35">
-                          ID #{product.id}
-                        </p>
                       </div>
                     </div>
                   </td>
@@ -196,7 +192,7 @@ const ProductTable = ({
                         className="btn btn-sm border-base-300 bg-transparent px-4 font-medium hover:border-primary hover:bg-primary hover:text-primary-content"
                         onClick={() =>
                           navigate(
-                            `/Products/edit/${product.id}`,
+                            `/products/edit/${product.id}`,
                           )
                         }
                       >

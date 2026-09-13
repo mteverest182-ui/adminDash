@@ -1,5 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
-import useEscapeKey from "../features/useEscapeKey";
+import { useEffect, useState, } from "react";
 
 const AdminForm = ({
   initialData = null,
@@ -59,6 +58,7 @@ const AdminForm = ({
 
     if (!form.email.trim()) {
       setError("Email wajib di isi");
+      
       setFieldErrors({ email: true });
       return;
     }

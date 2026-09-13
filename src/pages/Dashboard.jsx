@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../api/auth.store";
 import { getDashboardData } from "../api/dashboard.api";
-import WhatsappSetting from "../includes/whatsapp/whatsappSetting"
+import WhatsappSetting from "../includes/whatsapp/WhatsappSetting"
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
@@ -23,8 +23,6 @@ const Dashboard = () => {
         setError("");
 
         const response = await getDashboardData();
-
-        console.log("DASHBOARD STATS:", response);
 
         setStats(
           response.data ?? {
@@ -52,7 +50,6 @@ const Dashboard = () => {
     <div className="min-h-screen bg-base-200 px-5 py-8 md:px-8 md:py-10 lg:px-10">
       <div className="mx-auto max-w-7xl">
 
-        {/* HEADER */}
         <header className="mb-10 md:mb-14">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
@@ -60,27 +57,26 @@ const Dashboard = () => {
                 Overview
               </p>
 
-              <h1 className="mt-3 font-[Philosopher] text-4xl leading-none tracking-tight md:text-5xl lg:text-5xl">
+              <h1 className="mt-3 font-[Philosopher] text-4xl leading-none tracking-tight md:text-5xl lg:text-6xl">
                 Dashboard
               </h1>
 
               <p className="mt-4 text-sm text-base-content/50">
                 Selamat datang,{" "}
-                <span className="font-medium text-base-content/80">
+                <span className="font-medium text-base-content/80 ">
                   {user?.username || "-"}
                 </span>
               </p>
             </div>
 
             <div className="hidden md:block">
-              <p className="text-right text-[9px] uppercase tracking-[0.3em] text-base-content/30">
+              <p className="text-right text-[10px] uppercase tracking-[0.3em] text-base-content/30">
                 Admin Overview
               </p>
             </div>
           </div>
         </header>
 
-        {/* ERROR */}
         {error && (
           <div className="mb-8 border border-error/20 bg-error/5 px-5 py-4">
             <div className="flex items-center gap-3">
@@ -93,7 +89,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* STATISTICS */}
         <section>
           <div className="mb-5 flex items-center justify-between">
             <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-base-content/40">
@@ -107,7 +102,6 @@ const Dashboard = () => {
 
           <div className="grid grid-cols-1 gap-px overflow-hidden border border-base-300/60 bg-base-300/60 md:grid-cols-3">
 
-            {/* PRODUCTS */}
             <Link to={"/products"}>
             <div className="group bg-base-100 p-6 transition-colors duration-300 hover:bg-base-200/50 md:p-8 lg:p-9">
               <div className="flex items-start justify-between">
@@ -138,7 +132,6 @@ const Dashboard = () => {
             </div>
             </Link>
 
-            {/* CATEGORIES */}
             <Link to={"/categories"}>
             <div className="group bg-base-100 p-6 transition-colors duration-300 hover:bg-base-200/50 md:p-8 lg:p-9">
               <div className="flex items-start justify-between">
@@ -169,7 +162,6 @@ const Dashboard = () => {
             </div>
             </Link>
 
-            {/* USERS */}
             <Link to={"/users"}>
             <div className="group bg-base-100 p-6 transition-colors duration-300 hover:bg-base-200/50 md:p-8 lg:p-9">
               <div className="flex items-start justify-between">
@@ -202,7 +194,6 @@ const Dashboard = () => {
           </div>
         </section>
 
-        {/* ACCOUNT INFORMATION */}
         <section className="mt-10 md:mt-12">
           <div className="mb-5">
             <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-base-content/40">
@@ -219,9 +210,8 @@ const Dashboard = () => {
               <div className="mt-3 h-px w-10 bg-primary/50" />
             </div>
 
-            <div className="grid gap-8 sm:grid-cols-2">
+            <div className="flex justify-between gap-8 sm:grid-cols-2 ">
 
-              {/* USERNAME */}
               <div>
                 <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-base-content/40">
                   Username
@@ -232,13 +222,12 @@ const Dashboard = () => {
                 </p>
               </div>
 
-              {/* ROLE */}
               <div>
                 <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-base-content/40">
                   Role
                 </p>
 
-                <div className="mt-3">
+                <div>
                   <span className="inline-flex items-center rounded-full border border-primary/25 bg-primary/5 px-3.5 py-1.5 text-[9px] font-medium uppercase tracking-[0.2em] text-primary">
                     {user?.role?.replace("_", " ") || "-"}
                   </span>
@@ -249,7 +238,6 @@ const Dashboard = () => {
           </div>
         </section>
 
-        {/* WHATSAPP ORDER URL */}
         <section className="mt-10 md:mt-12">
           <div className="mb-5">
             <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-base-content/40">

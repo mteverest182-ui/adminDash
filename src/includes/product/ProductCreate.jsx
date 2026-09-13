@@ -24,13 +24,6 @@ const ProductCreate = () => {
       formData.append("discountPercent", form.discountPercent ?? 0)
       formData.append("stock", form.stock);
       formData.append("image", image);
-
-      console.log("CREATE PRODUCT:");
-
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
-
       await createProduct(formData);
 
       navigate("/products");

@@ -58,14 +58,13 @@ const Product = () => {
   return (
     <div className="min-h-screen bg-base-200 px-5 py-8 md:px-8 md:py-10 lg:px-10">
       <div className="mx-auto max-w-7xl">
-        {/* PAGE HEADER */}
         <section className="mb-7 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-primary">
+          <div >
+            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-primary mb-3">
               Collection
             </p>
 
-            <h1 className="mt-2 font-serif text-2xl tracking-tight md:text-3xl">
+            <h1 className="mt-2 font-serif text-2xl tracking-tight md:text-3xl lg:text-6xl">
               All Products
             </h1>
 
@@ -73,7 +72,9 @@ const Product = () => {
               Kelola seluruh product yang tersedia di toko.
             </p>
           </div>
+          <div className="lg:mb-10 md:mb-3">
                    <ProductHeader />
+            </div>
         </section>
 
                       <ProductSearch
@@ -81,28 +82,23 @@ const Product = () => {
               onChange={handleSearch}
             />
 
-        {/* ERROR */}
         {!loading && error && (
           <div className="mb-5 rounded-2xl border border-error/20 bg-error/5 px-5 py-4 text-sm text-error">
             {error}
           </div>
         )}
 
-        {/* PRODUCT CONTENT */}
         <section className="overflow-hidden rounded-2xl border border-base-300 bg-base-100 shadow-sm">
-          {/* LOADING */}
           {loading && (
             <div className="flex min-h-60 items-center justify-center">
               <span className="loading loading-spinner loading-lg text-primary" />
             </div>
           )}
 
-          {/* CONTENT */}
           {!loading && !error && (
             <>
               {products.length > 0 ? (
                 <>
-                  {/* TABLE */}
                   <ProductTable
                     products={products}
                     loadMoreRef={loadMoreRef}
@@ -132,7 +128,6 @@ const Product = () => {
           )}
         </section>
 
-        {/* DELETE MODAL */}
         <ProductDeleteModal
           product={deletingProduct}
           loading={deleteLoading}

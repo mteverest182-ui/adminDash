@@ -80,7 +80,7 @@ export const useAuthStore = create((set) => ({
     try {
       await logoutApi();
     } catch (error) {
-      console.error("LOGOUT ERROR:", error);
+      console.error( error);
     } finally {
       set({
         user: null,

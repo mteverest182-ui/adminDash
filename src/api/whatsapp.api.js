@@ -9,30 +9,30 @@ const useWhatsappSetting = () => {
   const [whatsappUrl, setWhatsappUrl] = useState("");
   const [savedWhatsappUrl, setSavedWhatsappUrl] = useState("");
 
+  const [orderChannel, setOrderChannel] = useState(null);
+
   const [whatsappLoading, setWhatsappLoading] = useState(true);
   const [whatsappSaving, setWhatsappSaving] = useState(false);
 
   const [whatsappMessage, setWhatsappMessage] = useState("");
-  const [whatsappMessageType, setWhatsappMessageType] = useState("success");
+  const [whatsappMessageType, setWhatsappMessageType] =
+    useState("success");
 
   const loadWhatsappSetting = async () => {
     try {
       setWhatsappLoading(true);
       setWhatsappMessage("");
-
       const response = await getWhatsappSetting();
-
-      console.log("WHATSAPP SETTING:", response);
-
       const url = response.data?.whatsappUrl || "";
+      const channel = response.data?.orderChannel || null;
 
       setWhatsappUrl(url);
       setSavedWhatsappUrl(url);
+      setOrderChannel(channel);
     } catch (error) {
-      console.error("GET WHATSAPP SETTING ERROR:", error);
-
       setWhatsappMessage(
-        error.response?.data?.message || "Gagal mengambil WhatsApp URL",
+        error.response?.data?.message ||
+          "Gagal mengambil Order URL",
       );
 
       setWhatsappMessageType("error");
@@ -49,7 +49,7 @@ const useWhatsappSetting = () => {
     const url = whatsappUrl.trim();
 
     if (!url) {
-      setWhatsappMessage("URL WhatsApp wajib diisi");
+      setWhatsappMessage("URL wajib diisi");
       setWhatsappMessageType("error");
       return;
     }
@@ -60,19 +60,36 @@ const useWhatsappSetting = () => {
 
       const response = await updateWhatsappSetting(url);
 
-      console.log("UPDATE WHATSAPP:", response);
+      const savedUrl =
+        response.data?.whatsappUrl || url;
 
-      setWhatsappUrl(url);
-      setSavedWhatsappUrl(url);
+      const channel =
+        response.data?.orderChannel || null;
 
-      setWhatsappMessage("WhatsApp URL berhasil disimpan");
+      setWhatsappUrl(savedUrl);
+      setSavedWhatsappUrl(savedUrl);
+      setOrderChannel(channel);
+
+      if (channel === "whatsapp") {
+        setWhatsappMessage(
+          "URL berhasil disimpan dan terdeteksi sebagai WhatsApp.",
+        );
+      } else {
+        setWhatsappMessage(
+          "URL berhasil disimpan sebagai external order URL.",
+        );
+      }
 
       setWhatsappMessageType("success");
     } catch (error) {
-      console.error("UPDATE WHATSAPP ERROR:", error);
+      console.error(
+        "UPDATE WHATSAPP ERROR:",
+        error,
+      );
 
       setWhatsappMessage(
-        error.response?.data?.message || "Gagal menyimpan WhatsApp URL",
+        error.response?.data?.message ||
+          "Gagal menyimpan Order URL",
       );
 
       setWhatsappMessageType("error");
@@ -88,19 +105,25 @@ const useWhatsappSetting = () => {
 
       const response = await deleteWhatsappSetting();
 
-      console.log("DELETE WHATSAPP:", response);
 
       setWhatsappUrl("");
       setSavedWhatsappUrl("");
+      setOrderChannel(null);
 
-      setWhatsappMessage("WhatsApp URL berhasil dihapus");
+      setWhatsappMessage(
+        "Order URL berhasil dihapus",
+      );
 
       setWhatsappMessageType("success");
     } catch (error) {
-      console.error("DELETE WHATSAPP ERROR:", error);
+      console.error(
+        "DELETE WHATSAPP ERROR:",
+        error,
+      );
 
       setWhatsappMessage(
-        error.response?.data?.message || "Gagal menghapus WhatsApp URL",
+        error.response?.data?.message ||
+          "Gagal menghapus Order URL",
       );
 
       setWhatsappMessageType("error");
@@ -114,6 +137,8 @@ const useWhatsappSetting = () => {
     setWhatsappUrl,
 
     savedWhatsappUrl,
+
+    orderChannel,
 
     whatsappLoading,
     whatsappSaving,

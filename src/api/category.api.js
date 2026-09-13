@@ -34,21 +34,3 @@ export const deleteCategory = async (id) => {
 
   return response.data;
 };
-
-export const getCategoryProducts = async (
-  categoryId,
-  page = 1,
-  limit = 8
-) => {
-  const response = await api.get(
-    `/api/categories/${categoryId}/products`,
-    {
-      params: {
-        page,
-        limit,
-      },
-    }
-  );
-
-  return response.data;
-};

@@ -7,6 +7,7 @@ import {
     BANNER_SLOT_OPTIONS,
     BANNER_STATUS_OPTIONS,
 } from "./BannerSlotOptions";
+import useEscapeKey from "../../features/useEscapeKey";
 
 const IMAGE_CONFIGS = [
     {
@@ -130,6 +131,7 @@ const BannerForm = ({
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    useEscapeKey(onClose, !loading);
 
     const existingImages = useMemo(() => {
         return Object.fromEntries(
@@ -323,24 +325,6 @@ const BannerForm = ({
             const formData =
                 buildFormData();
 
-            console.log(
-                "SAVE BANNER:",
-                {
-                    mode: isEditMode
-                        ? "UPDATE"
-                        : "CREATE",
-                    title: title.trim(),
-                    slotKey,
-                    status,
-                    desktop:
-                        images.desktop?.name ??
-                        null,
-                    mobile:
-                        images.mobile?.name ??
-                        null,
-                },
-            );
-
             if (isEditMode) {
                 await updateBanner(
                     banner.id,
@@ -355,7 +339,6 @@ const BannerForm = ({
             await onSuccess();
         } catch (error) {
             console.error(
-                "SAVE BANNER ERROR:",
                 error,
             );
 

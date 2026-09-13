@@ -36,11 +36,7 @@ function App() {
             <Route path="/products/create" element={<ProductCreate />} />
             <Route path="/products/edit/:id" element={<ProductEdit />} />
             <Route path="/categories" element={<Category />} />
-            
-
-            <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
-              <Route path="/users" element={<Users />} />
-            </Route>
+            <Route path="/users" element={<Users />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/signin" replace />} />

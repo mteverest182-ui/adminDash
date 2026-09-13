@@ -27,51 +27,77 @@ const useProducts = () => {
 
   const loadingMoreRef = useRef(false);
   const loadMoreRef = useRef(null);
+  const requestIdRef= useRef(0);
 
   const fetchProducts = useCallback(
-    async (pageNumber = 1, searchValue = "") => {
-      try {
-        if (pageNumber === 1) {
-          setLoading(true);
-        }
+  async (pageNumber = 1, searchValue = "") => {
+    const requestId = ++requestIdRef.current;
 
-        setError("");
+    try {
+      if (pageNumber === 1) {
+        setLoading(true);
+      }
 
-        const response = await getProducts(pageNumber, 8, searchValue);
+      setError("");
 
-        console.log("GET PRODUCTS:", response);
+      const response = await getProducts(
+        pageNumber,
+        8,
+        searchValue,
+      );
 
-        const newProducts = response.data ?? [];
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
 
-        const paginationData = response.pagination ?? DEFAULT_PAGINATION;
+      const newProducts = response.data ?? [];
 
-        if (pageNumber === 1) {
-          setProducts(newProducts);
-        } else {
-          setProducts((prev) => [...prev, ...newProducts]);
-        }
+      const paginationData =
+        response.pagination ?? DEFAULT_PAGINATION;
 
-        setPage(paginationData.page ?? pageNumber);
+      if (pageNumber === 1) {
+        setProducts(newProducts);
+      } else {
+        setProducts((prev) => [
+          ...prev,
+          ...newProducts,
+        ]);
+      }
 
-        setHasNextPage(paginationData.hasNextPage ?? false);
+      setPage(
+        paginationData.page ?? pageNumber,
+      );
 
-        setPagination(paginationData);
-      } catch (error) {
-        console.error("GET PRODUCTS ERROR:", error);
+      setHasNextPage(
+        paginationData.hasNextPage ?? false,
+      );
 
-        if (pageNumber === 1) {
-          setProducts([]);
-        }
+      setPagination(paginationData);
+    } catch (error) {
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
 
-        setError(
-          error.response?.data?.message || "Gagal mengambil data product",
-        );
-      } finally {
+      console.error(
+        error,
+      );
+
+      if (pageNumber === 1) {
+        setProducts([]);
+      }
+
+      setError(
+        error.response?.data?.message ||
+          "Gagal mengambil data product",
+      );
+    } finally {
+      if (requestId === requestIdRef.current) {
         setLoading(false);
       }
-    },
-    [],
-  );
+    }
+  },
+  [],
+);
 
   useEffect(() => {
     fetchProducts(1, "");
@@ -100,8 +126,6 @@ const useProducts = () => {
 
       const response = await getProducts(nextPage, 8, search);
 
-      console.log("LOAD MORE PRODUCTS:", response);
-
       const newProducts = response.data ?? [];
 
       const paginationData = response.pagination ?? DEFAULT_PAGINATION;
@@ -114,7 +138,7 @@ const useProducts = () => {
 
       setPagination(paginationData);
     } catch (error) {
-      console.error("LOAD MORE PRODUCTS ERROR:", error);
+      console.error(error);
 
       setError(
         error.response?.data?.message || "Gagal mengambil product berikutnya",
@@ -167,7 +191,7 @@ const useProducts = () => {
 
       removeProductFromState(productId);
     } catch (error) {
-      console.error("DELETE PRODUCT ERROR:", error);
+      console.error(error);
 
       throw error;
     }

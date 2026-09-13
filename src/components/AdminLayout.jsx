@@ -50,14 +50,10 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen bg-base-200">
-      {/* =========================================
-          HEADER
-      ========================================= */}
       <header className="fixed left-0 right-0 top-0 z-50 h-16 border-b border-base-300 bg-base-100">
         <div className="flex h-full items-center justify-between px-4 sm:px-6">
           {/* Left */}
           <div className="flex items-center gap-3">
-            {/* Hamburger - MOBILE ONLY */}
             <button
               type="button"
               className="btn btn-square btn-ghost md:hidden"
@@ -66,14 +62,11 @@ const AdminLayout = () => {
             >
               <FontAwesomeIcon icon={faBars} />
             </button>
-
-            {/* Brand */}
             <h1 className="text-base font-bold tracking-tight sm:text-lg">
               Product Management
             </h1>
           </div>
 
-          {/* Admin */}
           <div className="flex items-center gap-3">
             <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold">Admin</p>
@@ -93,9 +86,6 @@ const AdminLayout = () => {
         </div>
       </header>
 
-      {/* =========================================
-          MOBILE OVERLAY
-      ========================================= */}
       {sidebarOpen && (
         <div
           className="
@@ -107,9 +97,6 @@ const AdminLayout = () => {
         />
       )}
 
-      {/* =========================================
-          SIDEBAR
-      ========================================= */}
       <aside
         className={`
           fixed
@@ -140,9 +127,7 @@ const AdminLayout = () => {
         `}
       >
         <div className="flex h-full flex-col">
-          {/* =====================================
-              SIDEBAR HEADER
-          ===================================== */}
+          
           <div className="flex h-14 shrink-0 items-center justify-end px-3 lg:hidden">
             <button
               type="button"
@@ -153,9 +138,7 @@ const AdminLayout = () => {
               <FontAwesomeIcon icon={faXmark} />
             </button>
           </div>
-          {/* =====================================
-              NAVIGATION
-          ===================================== */}
+
 
           <nav className="flex-1 overflow-y-auto mt-2">
             {/* Menu Label */}
@@ -175,9 +158,8 @@ const AdminLayout = () => {
                 lg:text-left
               "
             >
-              {/* Desktop */}
+
               <span className="md:hidden lg:inline">Menu</span>
-              {/* Tablet */}
             </p>
 
             <ul className="space-y-1">
@@ -216,10 +198,7 @@ const AdminLayout = () => {
                 </li>
 
 
-              {/* Products */}
-
               <li>
-                {/* Products Header */}
                 <button
                   type="button"
                   aria-expanded={productsOpen}
@@ -252,7 +231,6 @@ const AdminLayout = () => {
                   </span>
                 </button>
 
-                {/* Products Dropdown */}
                 {productsOpen && (
                   <ul className="mt-1 space-y-1 lg:pl-4">
                     <li>
@@ -326,9 +304,6 @@ const AdminLayout = () => {
             </ul>
           </nav>
 
-          {/* =====================================
-              LOGOUT
-          ===================================== */}
           <div
             className="
               shrink-0
@@ -364,22 +339,16 @@ const AdminLayout = () => {
                 cursor-pointer
               "
             >
-              <button type="button">
                 <FontAwesomeIcon
                   icon={faRightFromBracket}
                   className="w-4 shrink-0"
                 />
-
                 <span className="md:hidden lg:inline">Logout</span>
-              </button>
             </Link>
           </div>
         </div>
       </aside>
 
-      {/* =========================================
-          MAIN CONTENT
-      ========================================= */}
       <main
         className="
           min-h-screen

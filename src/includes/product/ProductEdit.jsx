@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { getProductById, editProduct } from "../../api/product.api";
-
 import ProductForm from "./ProductForm";
+
 
 const ProductEdit = () => {
   const navigate = useNavigate();
@@ -24,11 +23,9 @@ const ProductEdit = () => {
 
         const response = await getProductById(id);
 
-        console.log("GET PRODUCT DETAIL:", response);
-
         setProduct(response.data ?? response);
       } catch (error) {
-        console.error("GET PRODUCT DETAIL ERROR:", error);
+        console.error(error);
 
         setError(
           error.response?.data?.message || "Gagal mengambil data product",
@@ -49,15 +46,11 @@ const ProductEdit = () => {
       const formData = new FormData();
 
       formData.append("name", form.name.trim());
-
       formData.append("brand", form.brand.trim());
-
       formData.append("gender", form.gender);
-
+      formData.append("categoryId", form.categoryId)
       formData.append("price", form.price);
-
-      formData.append("discount", form.discountPercent)
-
+      formData.append("discountPercent", form.discountPercent)
       formData.append("stock", form.stock);
 
       // Hanya kirim image jika user
@@ -66,17 +59,11 @@ const ProductEdit = () => {
         formData.append("image", image);
       }
 
-      console.log("UPDATE PRODUCT:");
-
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
-
       await editProduct(id, formData);
 
-      navigate("/Products");
+      navigate("/products");
     } catch (error) {
-      console.error("UPDATE PRODUCT ERROR:", error);
+      console.error(error);
 
       setError(error.response?.data?.message || "Gagal memperbarui product");
     } finally {
@@ -158,7 +145,7 @@ const ProductEdit = () => {
               <button
                 type="button"
                 className="btn mt-5"
-                onClick={() => navigate("/Products")}
+                onClick={() => navigate("/products")}
               >
                 Kembali ke Products
               </button>
@@ -177,7 +164,7 @@ const ProductEdit = () => {
             <button
               type="button"
               className="btn btn-circle btn-ghost"
-              onClick={() => navigate("/Products")}
+              onClick={() => navigate("/products")}
               disabled={submitLoading}
             >
               ←

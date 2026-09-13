@@ -19,7 +19,6 @@ export const updateAdmin = async (id, data) => {
 
 export const deleteAdmin = async(id) => {
     const response = await api.delete(`/api/users/${id}`);
-
     return response.data;
 }
 

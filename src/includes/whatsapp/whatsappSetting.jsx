@@ -5,6 +5,7 @@ const WhatsappSetting = () => {
     whatsappUrl,
     setWhatsappUrl,
     savedWhatsappUrl,
+    orderChannel,
     whatsappLoading,
     whatsappSaving,
     whatsappMessage,
@@ -12,6 +13,13 @@ const WhatsappSetting = () => {
     handleSaveWhatsapp,
     handleDeleteWhatsapp,
   } = useWhatsappSetting();
+
+  const channelLabel =
+    orderChannel === "whatsapp"
+      ? "WhatsApp"
+      : orderChannel === "external"
+        ? "External"
+        : null;
 
   return (
     <div className="border border-base-300/60 bg-base-100">
@@ -24,12 +32,13 @@ const WhatsappSetting = () => {
             </p>
 
             <h2 className="mt-2 font-[Philosopher] text-2xl tracking-tight md:text-3xl">
-              WhatsApp Ordering
+              Order URL
             </h2>
 
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-base-content/50">
-              Atur URL WhatsApp yang digunakan pelanggan untuk melakukan
-              pemesanan produk.
+              Atur URL yang digunakan pelanggan untuk melakukan pemesanan
+              produk. URL dapat berupa WhatsApp langsung, shortlink yang
+              mengarah ke WhatsApp, atau URL external lainnya.
             </p>
           </div>
 
@@ -70,7 +79,7 @@ const WhatsappSetting = () => {
         <div>
           <label className="mb-2 block">
             <span className="text-[9px] font-medium uppercase tracking-[0.25em] text-base-content/40">
-              WhatsApp URL
+              Order URL
             </span>
           </label>
 
@@ -102,8 +111,11 @@ const WhatsappSetting = () => {
           </div>
 
           <p className="mt-2 text-[10px] leading-relaxed text-base-content/35">
-            Gunakan format internasional tanpa tanda +, spasi, atau tanda
-            hubung. Contoh: https://wa.me/6281234567890
+            Contoh WhatsApp:
+            {" "}
+            https://wa.me/6281234567890
+            {" "}
+            atau gunakan shortlink yang mengarah ke WhatsApp.
           </p>
         </div>
 
@@ -131,29 +143,61 @@ const WhatsappSetting = () => {
         {/* ACTIVE CONFIGURATION */}
         {!whatsappLoading && savedWhatsappUrl && (
           <div className="mt-7">
-            <div className="flex flex-col gap-4 border border-base-300/60 bg-base-200/30 p-5 md:flex-row md:items-center md:justify-between">
-              <div className="min-w-0">
-                <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-base-content/40">
-                  Active Order URL
-                </p>
+            <div className="flex flex-col gap-5 border border-base-300/60 bg-base-200/30 p-5">
+              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <div className="min-w-0">
+                  <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-base-content/40">
+                    Active Order URL
+                  </p>
 
-                <p className="mt-2 break-all text-sm font-medium tracking-wide text-base-content/80">
-                  {savedWhatsappUrl}
-                </p>
+                  <p className="mt-2 break-all text-sm font-medium tracking-wide text-base-content/80">
+                    {savedWhatsappUrl}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm shrink-0 px-4 text-error hover:bg-error/10"
+                  onClick={handleDeleteWhatsapp}
+                  disabled={whatsappSaving}
+                >
+                  {whatsappSaving ? (
+                    <span className="loading loading-spinner loading-xs" />
+                  ) : (
+                    "Remove"
+                  )}
+                </button>
               </div>
 
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm shrink-0 px-4 text-error hover:bg-error/10"
-                onClick={handleDeleteWhatsapp}
-                disabled={whatsappSaving}
-              >
-                {whatsappSaving ? (
-                  <span className="loading loading-spinner loading-xs" />
-                ) : (
-                  "Remove"
-                )}
-              </button>
+              {/* DETECTED CHANNEL */}
+              <div className="border-t border-base-300/60 pt-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[9px] font-medium uppercase tracking-[0.25em] text-base-content/40">
+                      Detected Channel
+                    </p>
+
+                    <p className="mt-1 text-xs text-base-content/50">
+                      Channel ini digunakan frontend untuk menentukan
+                      cara membuka Order URL.
+                    </p>
+                  </div>
+
+                  {orderChannel === "whatsapp" ? (
+                    <span className="badge badge-success badge-outline">
+                      WhatsApp
+                    </span>
+                  ) : orderChannel === "external" ? (
+                    <span className="badge badge-neutral badge-outline">
+                      External
+                    </span>
+                  ) : (
+                    <span className="badge badge-warning badge-outline">
+                      Unknown
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -165,8 +209,8 @@ const WhatsappSetting = () => {
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />
 
               <p className="text-xs leading-relaxed text-base-content/50">
-                WhatsApp ordering belum dikonfigurasi. Simpan URL WhatsApp
-                untuk mengaktifkan channel pemesanan pelanggan.
+                Order URL belum dikonfigurasi. Simpan URL untuk
+                mengaktifkan channel pemesanan pelanggan.
               </p>
             </div>
           </div>

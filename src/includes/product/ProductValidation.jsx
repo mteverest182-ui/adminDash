@@ -63,7 +63,7 @@ export const validateProductField = (name, value) => {
                         return "Discount tidak boleh kurang dari 0%";
                     }
 
-                    if(Number(value) < 0){
+                    if(Number(value) > 100){
                         return "Discount tidak boleh lebih dari 100%";
                     }
 

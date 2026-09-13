@@ -7,11 +7,13 @@ import {
 
 import {
   getCategories,
-  getCategoryProducts,
   deleteCategory,
 } from "../api/category.api";
 
-import { getProducts } from "../api/product.api";
+import {
+  getProducts,
+  getCategoryProducts,
+} from "../api/product.api";
 
 import CategoryFilter from "../includes/category/CategoryFilter";
 import ProductGrid from "../includes/category/ProductGrid";
@@ -48,95 +50,148 @@ const Category = () => {
   const [pagination, setPagination] =
     useState(DEFAULT_PAGINATION);
 
+  const [error, setError] = useState("");
+
+  // Mencegah load more berjalan dua kali
   const loadingMoreRef = useRef(false);
 
-  const [error, setError] = useState("");
+  // Menandai request product terbaru
+  const productRequestRef = useRef(0);
 
   // =========================================================
   // FETCH CATEGORIES
   // =========================================================
 
-  const fetchCategories = async () => {
-    try {
-      setCategoryLoading(true);
-      setError("");
+  const fetchCategories = useCallback(
+    async () => {
+      try {
+        setCategoryLoading(true);
+        setError("");
 
-      const response = await getCategories();
+        const response =
+          await getCategories();
 
-      console.log(
-        "GET CATEGORIES:",
-        response,
-      );
+        const data = Array.isArray(
+          response.data,
+        )
+          ? response.data
+          : [];
 
-      const data = Array.isArray(
-        response.data,
-      )
-        ? response.data
-        : [];
+        setCategories(data);
+      } catch (error) {
+        console.error(
+          "GET CATEGORIES ERROR:",
+          error,
+        );
 
-      setCategories(data);
-    } catch (error) {
-      console.error(
-        "GET CATEGORIES ERROR:",
-        error,
-      );
+        setCategories([]);
 
-      setCategories([]);
-
-      setError(
-        error.response?.data?.message ||
-          "Gagal mengambil data category",
-      );
-    } finally {
-      setCategoryLoading(false);
-    }
-  };
+        setError(
+          error.response?.data?.message ||
+            "Gagal mengambil data category",
+        );
+      } finally {
+        setCategoryLoading(false);
+      }
+    },
+    [],
+  );
 
   // =========================================================
   // FETCH PRODUCTS
   // =========================================================
 
-  const fetchProducts = async (
-    page = 1,
-    categoryId = null,
-    gender = "",
-    append = false,
-  ) => {
-    try {
-      if (append) {
-        setLoadingMore(true);
-      } else {
-        setProductLoading(true);
-      }
+  const fetchProducts = useCallback(
+    async (
+      page = 1,
+      categoryId = null,
+      gender = "",
+      append = false,
+    ) => {
+      const requestId =
+        ++productRequestRef.current;
 
-      setError("");
+      try {
+        if (append) {
+          setLoadingMore(true);
+        } else {
+          setProductLoading(true);
+        }
 
-      let response;
+        setError("");
 
-      // =====================================================
-      // CATEGORY FILTER
-      // =====================================================
+        let response;
 
-      if (categoryId) {
-        response =
-          await getCategoryProducts(
-            categoryId,
-            page,
-            8,
-            gender,
+        // =====================================================
+        // CATEGORY
+        // =====================================================
+
+        if (categoryId) {
+          response =
+            await getCategoryProducts(
+              categoryId,
+              page,
+              8,
+              "",
+            );
+
+          const newProducts =
+            response.data?.products ??
+            [];
+
+          const newPagination =
+            response.data?.pagination ??
+            DEFAULT_PAGINATION;
+
+          // Request ini sudah tidak aktif
+          if (
+            requestId !==
+            productRequestRef.current
+          ) {
+            return;
+          }
+
+          if (append) {
+            setProducts((prev) => [
+              ...prev,
+              ...newProducts,
+            ]);
+          } else {
+            setProducts(newProducts);
+          }
+
+          setPagination(
+            newPagination,
           );
 
-        console.log(
-          "GET CATEGORY PRODUCTS:",
-          response,
+          return;
+        }
+
+        // =====================================================
+        // ALL PRODUCTS / MEN / WOMEN
+        // =====================================================
+
+        response = await getProducts(
+          page,
+          8,
+          "",
+          gender,
         );
 
         const newProducts =
-          response.data?.products ?? [];
+          response.data ?? [];
 
         const newPagination =
-          response.data?.pagination ??
+          response.pagination ??
           DEFAULT_PAGINATION;
+
+        // Request ini sudah tidak aktif
+        if (
+          requestId !==
+          productRequestRef.current
+        ) {
+          return;
+        }
 
         if (append) {
           setProducts((prev) => [
@@ -147,66 +202,47 @@ const Category = () => {
           setProducts(newProducts);
         }
 
-        setPagination(newPagination);
-
-        return;
-      }
-
-      // =====================================================
-      // ALL PRODUCTS + GENDER FILTER
-      // =====================================================
-
-      response = await getProducts(
-        page,
-        8,
-        "",
-        gender,
-      );
-
-      console.log(
-        "GET PRODUCTS:",
-        response,
-      );
-
-      const newProducts =
-        response.data ?? [];
-
-      const newPagination =
-        response.pagination ??
-        DEFAULT_PAGINATION;
-
-      if (append) {
-        setProducts((prev) => [
-          ...prev,
-          ...newProducts,
-        ]);
-      } else {
-        setProducts(newProducts);
-      }
-
-      setPagination(newPagination);
-    } catch (error) {
-      console.error(
-        "GET PRODUCTS ERROR:",
-        error,
-      );
-
-      if (!append) {
-        setProducts([]);
         setPagination(
-          DEFAULT_PAGINATION,
+          newPagination,
         );
-      }
+      } catch (error) {
+        console.error(
+          "GET PRODUCTS ERROR:",
+          error,
+        );
 
-      setError(
-        error.response?.data?.message ||
-          "Gagal mengambil product",
-      );
-    } finally {
-      setProductLoading(false);
-      setLoadingMore(false);
-    }
-  };
+        // Jangan biarkan request lama
+        // menghapus data request terbaru
+        if (
+          requestId !==
+          productRequestRef.current
+        ) {
+          return;
+        }
+
+        if (!append) {
+          setProducts([]);
+          setPagination(
+            DEFAULT_PAGINATION,
+          );
+        }
+
+        setError(
+          error.response?.data?.message ||
+            "Gagal mengambil product",
+        );
+      } finally {
+        if (
+          requestId ===
+          productRequestRef.current
+        ) {
+          setProductLoading(false);
+          setLoadingMore(false);
+        }
+      }
+    },
+    [],
+  );
 
   // =========================================================
   // INITIAL DATA
@@ -226,30 +262,51 @@ const Category = () => {
     };
 
     loadInitialData();
-  }, []);
+  }, [
+    fetchCategories,
+    fetchProducts,
+  ]);
 
   // =========================================================
   // CATEGORY CHANGE
   // =========================================================
 
-  const handleCategoryChange = async (
-    category,
-  ) => {
-    setSelectedCategory(category);
-    setSelectedGender("");
+  const handleCategoryChange = async (category) => {
 
-    setProducts([]);
-    setPagination(
-      DEFAULT_PAGINATION,
-    );
+  setSelectedCategory(category);
+  setSelectedGender("");
 
+  setProducts([]);
+  setPagination(DEFAULT_PAGINATION);
+
+  if (!category) {
     await fetchProducts(
       1,
-      category?.id ?? null,
+      null,
       "",
       false,
     );
-  };
+
+    return;
+  }
+
+  if (!category.id) {
+
+    setError(
+      "Category ID tidak ditemukan",
+    );
+
+    return;
+  }
+
+  await fetchProducts(
+    1,
+    category.id,
+    "",
+    false,
+  );
+};
+
 
   // =========================================================
   // GENDER CHANGE
@@ -258,14 +315,22 @@ const Category = () => {
   const handleGenderChange = async (
     gender,
   ) => {
+    // Gender aktif
     setSelectedGender(gender);
+
+    // Category dimatikan
     setSelectedCategory(null);
 
+    // Reset product
     setProducts([]);
+
+    // Reset pagination
     setPagination(
       DEFAULT_PAGINATION,
     );
 
+    // PENTING:
+    // MEN/WOMEN menggunakan getProducts()
     await fetchProducts(
       1,
       null,
@@ -278,31 +343,47 @@ const Category = () => {
   // LOAD MORE
   // =========================================================
 
-  const loadMoreProducts = async () => {
-    if (
-      loadingMoreRef.current ||
-      productLoading ||
-      !pagination.hasNextPage
-    ) {
-      return;
-    }
+  const loadMoreProducts = useCallback(
+    async () => {
+      if (
+        loadingMoreRef.current ||
+        productLoading ||
+        !pagination.hasNextPage
+      ) {
+        return;
+      }
 
-    loadingMoreRef.current = true;
+      loadingMoreRef.current = true;
 
-    try {
-      const nextPage =
-        pagination.page + 1;
+      try {
+        const nextPage =
+          pagination.page + 1;
 
-      await fetchProducts(
-        nextPage,
-        selectedCategory?.id ?? null,
-        selectedGender,
-        true,
-      );
-    } finally {
-      loadingMoreRef.current = false;
-    }
-  };
+        const categoryId =
+          selectedCategory?.id ??
+          null;
+
+        const gender =
+          selectedGender;
+
+        await fetchProducts(
+          nextPage,
+          categoryId,
+          gender,
+          true,
+        );
+      } finally {
+        loadingMoreRef.current = false;
+      }
+    },
+    [
+      pagination,
+      productLoading,
+      selectedCategory,
+      selectedGender,
+      fetchProducts,
+    ],
+  );
 
   // =========================================================
   // INFINITE SCROLL
@@ -346,11 +427,10 @@ const Category = () => {
       );
     };
   }, [
-    pagination,
+    pagination.hasNextPage,
     loadingMore,
     productLoading,
-    selectedCategory,
-    selectedGender,
+    loadMoreProducts,
   ]);
 
   // =========================================================
@@ -370,6 +450,7 @@ const Category = () => {
     setSelectedGender("");
 
     setProducts([]);
+
     setPagination(
       DEFAULT_PAGINATION,
     );
@@ -383,6 +464,7 @@ const Category = () => {
   }, [
     selectedCategory,
     selectedGender,
+    fetchProducts,
   ]);
 
   useEscapeKey(
@@ -458,13 +540,14 @@ const Category = () => {
   // CURRENT TITLE
   // =========================================================
 
-  const currentTitle = selectedCategory
-    ? selectedCategory.name
-    : selectedGender === "MEN"
-      ? "Men"
-      : selectedGender === "WOMEN"
-        ? "Women"
-        : "Semua Product";
+  const currentTitle =
+    selectedCategory
+      ? selectedCategory.name
+      : selectedGender === "MEN"
+        ? "Men"
+        : selectedGender === "WOMEN"
+          ? "Women"
+          : "Semua Product";
 
   // =========================================================
   // RENDER
@@ -473,6 +556,7 @@ const Category = () => {
   return (
     <div className="min-h-screen bg-base-200 px-5 py-4 md:px-8 md:py-10 lg:px-10">
       <div className="mx-auto max-w-7xl">
+
         {/* ERROR */}
         {error && (
           <div className="alert alert-error mb-6 border border-error/20">
@@ -483,11 +567,11 @@ const Category = () => {
         {/* CATEGORY FILTER */}
         <section className="mb-8">
           <div className="mb-4">
-            <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-primary">
+            <p className="mb-3 text-[9px] font-medium uppercase tracking-[0.3em] text-primary">
               Filter
             </p>
 
-            <h2 className="mt-1 text-2xl lg:text-4xl font-[Philosophy] mb-5">
+            <h2 className="mb-6 mt-1 text-2xl font-[Philosophy] lg:text-6xl">
               Product Selection
             </h2>
           </div>

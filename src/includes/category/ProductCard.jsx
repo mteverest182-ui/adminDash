@@ -128,7 +128,7 @@ const ProductCard = ({ product }) => {
             type="button"
             className="btn btn-sm w-full border-none bg-primary text-primary-content transition-colors hover:bg-accent"
             onClick={() =>
-              navigate(`/Products/edit/${product.id}`)
+              navigate(`/products/edit/${product.id}`)
             }
           >
             Edit Product

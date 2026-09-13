@@ -9,7 +9,7 @@ const Logout = () => {
       } catch (error) {
         console.error("LOGOUT ERROR:", error);
       } finally {
-        window.location.replace("/SignIn");
+        window.location.replace("/signin");
       }
     };
 
